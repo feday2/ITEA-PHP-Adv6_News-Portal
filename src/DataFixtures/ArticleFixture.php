@@ -3,9 +3,10 @@
 namespace App\DataFixtures;
 
 use App\Entity\Article;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class ArticleFixture extends AbstractFixture
+final class ArticleFixture extends AbstractFixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
@@ -13,8 +14,10 @@ class ArticleFixture extends AbstractFixture
             $title = \ucfirst($this->faker->words($this->faker->numberBetween(3, 5), true));
             $article = new Article($title);
 
+            $category = $this->getReference($this->faker->randomElement(\array_keys(CategoryFixture::CATEGORIES)));
             $description = \ucfirst($this->faker->words($this->faker->numberBetween(4, 8), true));
             $article
+                ->setCategory($category)
                 ->setDescription($description)
                 ->setImage($this->faker->imageUrl())
             ;
@@ -39,5 +42,13 @@ class ArticleFixture extends AbstractFixture
         }
 
         $manager->flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDependencies()
+    {
+        return [CategoryFixture::class];
     }
 }
