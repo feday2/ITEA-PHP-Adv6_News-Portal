@@ -3,7 +3,7 @@
 
 namespace App\Collection;
 
-use App\Model\Article;
+use App\Entity\Article;
 
 final class ArticleCollection implements \IteratorAggregate
 {
